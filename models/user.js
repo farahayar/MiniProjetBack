@@ -23,31 +23,52 @@ const userschema = new mongooose.Schema(
             trim: true,
             minlength: 2,
         },
+        prenom : {
+            type: String,
+            require: true,
+            trim: true,
+            minlength: 2,
+        },
         age : {
-            type:Number,
+            type:String,
             require:true,
             trim:true,
         },
         numero_tel : {
-            type: Number,
+            type: String,
             require: true,
             trim: true,
             minlength: 8,
         },
         cin : {
-            type: Number,
+            type: String,
             require: true,
             trim: true,
             minlength: 8,
+        },
+        formalabeur : {
+            type: String,
+            require: false,
+            trim: true,
+            minlength: 2,
         },
         lien_fb : {
             type: String,
             require: true,
             trim: true,
             minlength: 2,
+        },
+         image_user: {
+            type: String,
+            require: true,
+            trim: true,
         }
         
 
 
     }
 )
+
+
+User = mongooose.model('User', userschema);
+module.exports = { User };
