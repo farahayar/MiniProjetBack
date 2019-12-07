@@ -157,11 +157,10 @@ app.delete('/supprimerFormateur/:email', (req, res) => {
 
 
 app.post("/ajouterformation", multipartMiddleware, (req, res) => {
-    console.log("aaaaaa");
-    
+
     let data = JSON.parse(req.body.formation);
     let image = req.files.image;
-    
+
     let ext = image.type.split('/')[1];
     let imagePath = "assets/" + data._titre + "." + ext;
     console.log(imagePath);
@@ -169,25 +168,40 @@ app.post("/ajouterformation", multipartMiddleware, (req, res) => {
     fs.renameSync(req.files.image.path, imagePath);
     let im = "http://localhost:3000/" + data._titre + "." + ext;
 
-    let formation = new Formation({
-        titre: data._titre,
-        description: data._description,
-        volume_horaire: data._volume_horaire,
-        prix: data._prix,
-        idFormateur: data._idformateur,
-        image_Formation: im
+    console.log("nom" + data._idformateur);
+
+    Formateur.findOne({ nom: data._idformateur }).then((f) => {
+        console.log("f" + f._id);
+
+
+        let formation = new Formation({
+            titre: data._titre,
+            description: data._description,
+            volume_horaire: data._volume_horaire,
+            prix: data._prix,
+            idformateur: f._id,
+            image_Formation: im
+
+        });
+
+        formation.save().then(() => {
+            console.log("form" + formation);
+
+            res.status(200).send(formation);
+
+        }).catch((err) => {
+            res.status(400).send({
+                message: "erreur : " + err
+            })
+        })
+
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur : " + e
+        })
+
 
     });
-
-    formation.save().then(() => {
-
-        res.status(200).send(formation);
-
-    }).catch((err) => {
-        res.status(400).send({
-            message: "erreur : " + err
-        })
-    })
 });
 
 app.get('/ListerFormations', (req, res) => {
@@ -201,6 +215,56 @@ app.get('/ListerFormations', (req, res) => {
     })
 
 });
+
+app.put('/consulterFormateur/:id', (req, res) => {
+
+    let id = req.params.id;
+
+    Formation.findById({ _id: id }).then((format) => {
+
+
+        res.status(200).send(format);
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur : " + e
+        })
+
+
+    });
+})
+
+app.delete('/supprimerFormation/:id', (req, res) => {
+
+    let id = req.params.id;
+    console.log("id=" + id);
+
+    Formation.findOneAndRemove(
+        {
+            titre: id,
+        },
+
+        (err, doc) => {
+            if (!err) {
+                res.status(200).send(doc);
+                console.log(doc);
+            }
+            else { console.log('Error in Formation Delete :' + err) }
+        });
+});
+
+app.get('/getImageFormateur/:id', (req, res) => {
+
+    let id = req.params.id;
+    Formateur.findById({ _id: id }, (err, doc) => {
+        if (!err) {
+            res.status(200).send(doc);
+            console.log(doc);
+        }
+        else { console.log('Error :' + err) }
+    })
+
+});
+
 
 
 

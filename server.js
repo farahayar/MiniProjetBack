@@ -10,8 +10,10 @@ app.use(cors());
 
 app.use(express.static('assets'))
 const formateur = require('./controllers/formateurControllers');
+const user = require('./controllers/userControllers');
 
 
 app.use("/formateur", formateur);
+app.use("/user", user);
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

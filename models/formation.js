@@ -32,7 +32,6 @@ const formationSchema = new mongooose.Schema(
             type: String,
             require: true,
             trim: true,
-            minlength: 8,
 
         }
         , image_Formation: {
