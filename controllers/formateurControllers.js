@@ -1,208 +1,163 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
-const multipart = require('connect-multiparty');
-const { mongooose } = require('./../db/config');
 
-const { Formateur } = require('./../models/formateur');
+const multipart = require('connect-multiparty');
+
+const { mongoose } = require('./../db/config');
+const { Formateur } = require('./../models/Formateur');
 const { Formation } = require('./../models/formation');
+const { User } = require('./../models/user');
+const { Groupe } = require('./../models/groupe');
+const { Formalabeur } = require('./../models/formalabeur');
+
 var app = express();
 app.use(bodyParser.json());
 
 const multipartMiddleware = multipart({ uploadDir: './assets' });
 
-app.post("/connection", (req, res) => {
+// Afficher les formations d'un formateur
 
-    var data = req.body;
-    let email = data._email;
-    let Password = data._pwd;
-    console.log(email);
-    console.log(Password);
+app.get("/formationformateur/:id", (req, res) => {
 
+    Formation.find({ idformateur: req.params.id},(err, data) => {
+            if (!err) {
+                res.send(data);
+            }
+            else { console.log('Formateur introuvable :' + err) }
+        });
 
-    Formateur.findOne({ email: email }).then((resultat) => {
+});
 
+// Afficher Les formations d'un formalabeur
 
-        if (!resultat) {
+app.get("/formalabeurformation/:id", (req, res) => {
+    let idfor = [];
+    Formalabeur.find({cin: req.params.id},(err,f)=>{
+    if(!err)
+    {
+        Groupe.find({cin:req.params.id},(err, formalabeur) => {
+ 
+            formalabeur.forEach(element => {
+                idfor.push(element.idFormation);
+            });
+            
+            Formation.find({_id:idfor},(err,formation) => {
+                res.send(formation);
+            });
+        });
+    }
+    else
+        console.log("formateur introuvable");
+    });
+});
 
-            res.status(400).send({ message: "email  incorrect" })
-        }
+// Afficher les formation encour du formalabeur
+ 
+app.get("/encour/:cin", (req, res) => {
+    let idfor = [];
+    let formations=[];
+    Formalabeur.find({cin: req.params.cin},(err,f)=>{
+    if(!err)
+    {
+        Groupe.find({cin:req.params.cin},(err, formalabeur) => {
+ 
+            formalabeur.forEach(element => {
+                idfor.push(element.idFormation);
+            });
+            
+            Formation.find({_id:idfor},(err,formation) => {
+                formation.forEach(element => {
+                    if(new Date()>new Date(element.date))
+                    {
+                        if((element.duree*3600000)>(new Date()-new Date(element.date))) 
+                            formations.push(element);
+                        console.log((element.duree*3600000)+" et "+(new Date()-new Date(element.date)));
+                    }
+                    });
+                    res.send(formations);
+            });
+        });
+    }
+    else
+        console.log("formateur introuvable");
+    });
 
+});
 
-        if (!(Password === resultat.pwd)) {
+// Afficher les formation fini du formalabeur
 
-            res.status(404).send({ message: "mot de passe incorrect" })
-        }
-        console.log(" Formateur.admin" + resultat.admin);
-
-        let token = jwt.sign({ id: resultat._id, nom: resultat.nom, admin: resultat.admin }, "k").toString();
-        res.status(200).send({ token });
-
-    }).catch((err) => {
-        console.log("aaaaa");
-        res.status(400).send({
-            message: "erreur : " + err
-        })
+app.get("/fini/:cin", (req, res) => {
+    let idfor = [];
+    let formations=[];
+    Formalabeur.find({cin: req.params.cin},(err,f)=>{
+    if(!err)
+    {
+        Groupe.find({cin:req.params.cin},(err, formalabeur) => {
+ 
+            formalabeur.forEach(element => {
+                idfor.push(element.idFormation);
+            });
+            
+            Formation.find({_id:idfor},(err,formation) => {
+                formation.forEach(element => {
+                    if(new Date()>new Date(element.date))
+                    {
+                        if((element.duree*3600000) <(new Date()-new Date(element.date))) 
+                            formations.push(element);
+                        console.log((element.duree*3600000)+" et "+(new Date()-new Date(element.date)));
+                    }
+                });
+            res.send(formations);
+            });
+        });
+    }
+    else
+        console.log("formateur introuvable");
     });
 
 });
 
 
+/**************************************************************************************************************************** */
 
 
-app.post("/inscription", (req, res) => {
-    let data = req.body;
+app.delete('/deleteFormateur/:id', (req, res) => {
 
-    let privateKey = 10;
-    let hashedPassword = bcrypt.hashSync(data._Password, privateKey);
-
-    var ad = new Formateur({
-        login: data._login,
-
-
-        password: hashedPassword
-    });
-
-    ad.save().then(() => {
-
-        res.status(200).send(ad);
-
-    }).catch((err) => {
-        res.status(400).send({
-            message: "erreur : " + err
-        })
-    });
-
-});
-
-app.get('/Lister', (req, res) => {
-    Formateur.find().then((formateurs) => {
-        if (formateurs) {
-            res.status(200).send(formateurs);
-        }
-        else { console.log("not found" + err.message) }
-
-    })
-});
-
-app.post("/ajoutFormateur", multipartMiddleware, (req, res) => {
-    let data = JSON.parse(req.body.formateur);
-    let image = req.files.image;
-
-    let ext = image.type.split('/')[1];
-    let imagePath = "assets/" + data._nom + "." + ext;
-    console.log(imagePath);
-
-    fs.renameSync(req.files.image.path, imagePath);
-    let im = "http://localhost:3000/" + data._nom + "." + ext;
-
-    let formateur = new Formateur({
-        nom: data._nom,
-        prenom: data._prenom,
-        age: data._age,
-        fonction: data._fonction,
-        numero_tel: data._numero_tel,
-        email: data._email,
-        salaire: data._salaire,
-        image_formateur: im
-    })
-
-    formateur.save().then(() => {
-        res.status(200).send(formateur);
-    }).catch((err) => {
-        res.status(400).send({
-            message: "erreur : " + err
-
-        })
-        console.log(err);
-    })
-});
-
-app.put('/consulterFormateur/:id', (req, res) => {
-
-    let id = req.params.id;
-
-    Formateur.findById({ _id: id }).then((format) => {
-
-
-        res.status(200).send(format);
-    }).catch((e) => {
-        res.status(400).send({
-            message: "erreur : " + e
-        })
-
-
-    });
-})
-
-app.delete('/supprimerFormateur/:email', (req, res) => {
-
-    let email = req.params.email;
-    console.log(email);
-
-    Formateur.findOneAndRemove({ email: email },
+    Formateur.findOneAndRemove(
+        {
+            _id: req.params.id,
+        },
 
         (err, doc) => {
             if (!err) {
                 res.status(200).send(doc);
                 console.log(doc);
             }
-            else { console.log('Error in Employee Delete :' + err) }
+            else { console.log('Error in Formateur Delete :' + err) }
         });
 });
 
 
+app.delete('/supprimerFormation/:id', (req, res) => {
 
+    let id = req.params.id;
 
-app.post("/ajouterformation", multipartMiddleware, (req, res) => {
+    Formation.findOneAndRemove(
+        {
+            _id:id,
+        },
 
-    let data = JSON.parse(req.body.formation);
-    let image = req.files.image;
-
-    let ext = image.type.split('/')[1];
-    let imagePath = "assets/" + data._titre + "." + ext;
-    console.log(imagePath);
-
-    fs.renameSync(req.files.image.path, imagePath);
-    let im = "http://localhost:3000/" + data._titre + "." + ext;
-
-    console.log("nom" + data._idformateur);
-
-    Formateur.findOne({ nom: data._idformateur }).then((f) => {
-        console.log("f" + f._id);
-
-
-        let formation = new Formation({
-            titre: data._titre,
-            description: data._description,
-            volume_horaire: data._volume_horaire,
-            prix: data._prix,
-            idformateur: f._id,
-            image_Formation: im
-
+        (err, doc) => {
+            if (!err) {
+                res.status(200).send(doc);
+                console.log(doc);
+            }
+            else { console.log('Error in Formation Delete :' + err) }
         });
-
-        formation.save().then(() => {
-            console.log("form" + formation);
-
-            res.status(200).send(formation);
-
-        }).catch((err) => {
-            res.status(400).send({
-                message: "erreur : " + err
-            })
-        })
-
-    }).catch((e) => {
-        res.status(400).send({
-            message: "erreur : " + e
-        })
-
-
-    });
 });
+
+
 
 app.get('/ListerFormations', (req, res) => {
 
@@ -216,57 +171,6 @@ app.get('/ListerFormations', (req, res) => {
 
 });
 
-app.put('/consulterFormateur/:id', (req, res) => {
-
-    let id = req.params.id;
-
-    Formation.findById({ _id: id }).then((format) => {
-
-
-        res.status(200).send(format);
-    }).catch((e) => {
-        res.status(400).send({
-            message: "erreur : " + e
-        })
-
-
-    });
-})
-
-app.delete('/supprimerFormation/:id', (req, res) => {
-
-    let id = req.params.id;
-    console.log("id=" + id);
-
-    Formation.findOneAndRemove(
-        {
-            titre: id,
-        },
-
-        (err, doc) => {
-            if (!err) {
-                res.status(200).send(doc);
-                console.log(doc);
-            }
-            else { console.log('Error in Formation Delete :' + err) }
-        });
-});
-
-app.get('/getImageFormateur/:id', (req, res) => {
-
-    let id = req.params.id;
-    Formateur.findById({ _id: id }, (err, doc) => {
-        if (!err) {
-            res.status(200).send(doc);
-            console.log(doc);
-        }
-        else { console.log('Error :' + err) }
-    })
-
-});
-
-
 
 
 module.exports = app;
-

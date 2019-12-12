@@ -6,11 +6,7 @@ const jwt = require('jsonwebtoken');
 const multipart = require('connect-multiparty');
 const { mongooose } = require('./../db/config');
 
-<<<<<<< HEAD
 const { Formateur } = require('./../models/Formateur');
-=======
-const { Formateur } = require('./../models/formateur');
->>>>>>> ce138a7d5acd7f2661bc5eeb6cb5334655ca3a11
 const { Formation } = require('./../models/formation');
 const { User } = require('./../models/user');
 const { Groupe } = require('./../models/groupe');
@@ -20,35 +16,6 @@ app.use(bodyParser.json());
 
 const multipartMiddleware = multipart({ uploadDir: './assets' });
 
-<<<<<<< HEAD
-
-
-
-
-app.get("/fini/:cin", (req, res) => {
-    let formations =[];
-    Formalabeur.find({cin: req.params.cin},(err,f)=>{
-        let c=f.cin;
-    Groupe.find({c},(err, formalabeur) => {
-            let idfor =formalabeur.idFormation;
-            Formation.find({idfor},(err,formation) => {
-                formation.forEach(element => {
-                    if(element.duree <(new Date()-new Date(element.date))) 
-                    formations.push(element);
-                        console.log(new Date("12/09/2019")-new Date(element.date));
-                    });
-                    res.send(formations);  
-            });
-    }).catch((e) => {
-        res.status(400).send({
-            message: "erreur : " + e
-        })
-});
-});
-});
-
-=======
->>>>>>> ce138a7d5acd7f2661bc5eeb6cb5334655ca3a11
 app.post("/inscriptionformation/:id", (req, res) => {
     let data = req.body;
     let idf = req.params.id;
