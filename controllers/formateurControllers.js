@@ -4,7 +4,16 @@ const bcrypt = require('bcrypt');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const multipart = require('connect-multiparty');
-const { mongooose } = require('./../db/config');
+const { mongooose } = require('./../db/config'); 
+
+
+
+//************ */
+/************** */
+require('dotenv').config();
+const nodemailer = require ('nodemailer');
+const Email = require('email-templates');
+/****************/ 
 
 const { Formateur } = require('./../models/formateur');
 const { Formation } = require('./../models/formation');
@@ -12,6 +21,35 @@ var app = express();
 app.use(bodyParser.json());
 
 const multipartMiddleware = multipart({ uploadDir: './assets' });
+
+
+
+/*
+app.get("/Allformalabeurs", (req, res) => {
+    Formalabeur.find().then((forma) => {
+  console.log("aaaaaaaaaaaa"+forma.length);
+  var fe = [];
+
+  /*
+  for (let i = 0; i < forma.length; i++) {
+      fe = forma[i].email;
+
+      console.log("gr" + fe);}
+      */
+     /*
+     forma.forEach(element=>{
+         fe.push(element.email);
+     }
+        )
+
+          res.status(200).send(fe);
+          console.log("length + "+fe.length);
+          
+
+})
+});
+*/
+
 
 app.post("/connection", (req, res) => {
 
@@ -95,8 +133,8 @@ app.post("/ajoutFormateur", multipartMiddleware, (req, res) => {
     let imagePath = "assets/" + data._nom + "." + ext;
     console.log(imagePath);
 
-    fs.renameSync(req.files.image.path, imagePath);
-    let im = "http://localhost:3000/" + data._nom + "." + ext;
+   // fs.renameSync(req.files.image.path, imagePath);
+    let im = "http://localhost:4200/" + data._nom + "." + ext;
 
     let formateur = new Formateur({
         nom: data._nom,
@@ -106,6 +144,7 @@ app.post("/ajoutFormateur", multipartMiddleware, (req, res) => {
         numero_tel: data._numero_tel,
         email: data._email,
         salaire: data._salaire,
+        pwd :data._pwd,
         image_formateur: im
     })
 
@@ -154,7 +193,7 @@ app.delete('/supprimerFormateur/:email', (req, res) => {
 });
 
 
-
+/*
 
 app.post("/ajouterformation", multipartMiddleware, (req, res) => {
 
@@ -165,16 +204,14 @@ app.post("/ajouterformation", multipartMiddleware, (req, res) => {
     let imagePath = "assets/" + data._titre + "." + ext;
     console.log(imagePath);
 
-    fs.renameSync(req.files.image.path, imagePath);
-    let im = "http://localhost:3000/" + data._titre + "." + ext;
+    //fs.renameSync(req.files.image.path, imagePath);
+    let im = "http://localhost:4200/" + data._titre + "." + ext;
 
     console.log("nom" + data._idformateur);
 
     Formateur.findOne({ nom: data._idformateur }).then((f) => {
         console.log("f" + f._id);
-
-
-        let formation = new Formation({
+        let fort = new Formation({
             titre: data._titre,
             description: data._description,
             volume_horaire: data._volume_horaire,
@@ -183,11 +220,48 @@ app.post("/ajouterformation", multipartMiddleware, (req, res) => {
             image_Formation: im
 
         });
+        console.log("formation:"+fort);
+        fort.save().then((forma) => {
+        console.log("form" + forma);
+            /**********  EMAIL  ******* */
+                    /*********** */
+      // const mail=" <p> you have registered in our formation dear ${us._nom</p>  "
+      /*
+      const output = ` <h1 color='red' align="center">Formalab </h1> <br>
+                <br> <p align="center"> WE HAVE A NEW FORMATION </span>  </p>
+                <p align="center"> titre:${fort.titre}  </p>
+                <p align="center"> description : ${fort.description} </p>
+                <p align="center"> prix  : ${fort.prix}  </p>
+                `;
+        let transporter = nodemailer.createTransport({  
+            service : 'gmail',
+            auth: {
+                user : 'formalab7@gmail.com',
+                pass : 'azerty-123'
+                 }
+            });
+            let mailoptions={
+                from : 'formalab7@gmail.com',
+               // to:,
+                subject: 'FORMALAB NEW FORMATION' , 
+                html :output
+             };
+        /***********/
+            /******* */
+            /*
 
-        formation.save().then(() => {
-            console.log("form" + formation);
-
-            res.status(200).send(formation);
+            transporter.sendMail(mailoptions, (error, info) => {
+                if (error) {
+                    return console.log(error);
+                }
+                else {
+                    console.log("email sent");
+                }
+                });
+            /*********/ 
+            /*************** */
+            /*
+            res.status(200).send(forma);
 
         }).catch((err) => {
             res.status(400).send({
@@ -203,6 +277,125 @@ app.post("/ajouterformation", multipartMiddleware, (req, res) => {
 
     });
 });
+
+*/
+
+app.post("/ajouterformation", multipartMiddleware, (req, res) => {
+   // let data = JSON.parse(req.body.formation);
+    let image = req.files.image;
+    var j = [];
+   
+   console.log("hhhh"+j);
+   
+    //let ext = image.type.split('/')[1];
+    //let imagePath = "assets/" + data._titre + "." + ext;
+    //console.log(imagePath);
+
+    //fs.renameSync(req.files.image.path, imagePath);
+  // let im = "http://localhost:3000/" + data._titre + "." + ext;
+   //console.log(im);
+
+    var fe = [];
+
+    //console.log("nom" + data._idformateur);
+
+    Formateur.findOne({ nom: data._idformateur }).then((f) => {
+        console.log("f" + f._id);
+
+
+        let formation = new Formation({
+            titre: data._titre,
+            description: data._description,
+            volume_horaire: data._volume_horaire,
+            prix: data._prix,
+            idformateur: f._id,
+           // image_Formation: im
+
+        });
+        console.log("formation"+formation);
+        
+
+        formation.save().then((rese) => {
+          console.log("rese"+rese);
+          
+            rese.status(200).send(rese);
+           
+                Formalabeur.find().then((forma) => {
+                    console.log("aaaaaaaaaaaa"+forma.length);
+                    
+                    for (let i = 0; i < forma.length; i++) {
+                        fe = forma[i].email;
+            
+                        console.log("gr" + fe);}
+        
+                   
+            
+                })
+            
+           
+            console.log("form" + formation);
+            console.log("forml" + fe);
+
+            /**********  EMAIL  ******* */
+                    /*********** */
+      // const mail=" <p> you have registered in our formation dear ${us._nom</p>  "
+     /*const output = ` <h1 color='red' align="center">Formalab </h1> <br>
+      <br> <p align="center"> WE HAVE A NEW FORMATION </span>  </p>
+      <p align="center"> titre:${formation.titre}  </p>
+      <p align="center"> description : ${formation.description} </p>
+      <p align="center"> prix  : ${formation.prix}  </p>
+      <p align="center"> Don't hesitate to join us.</p>
+      `;
+let transporter = nodemailer.createTransport({  
+  service : 'gmail',
+  auth: {
+      user : 'formalab7@gmail.com',
+      pass : 'azerty-123'
+       }
+  });
+  //for(var i=0;i<fe.length;i++)
+ // {
+      console.log("fee"+fe[i]);
+      
+  var mailoptions={
+      from : 'formalab7@gmail.com',
+      to: 'gramiamal7@gmail.com',
+      subject: 'FORMALAB NEW FORMATION' , 
+      html :output
+  // };
+}
+/***********/
+  /******* /
+  transporter.sendMail(mailoptions, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      else {
+          console.log("email sent");
+      }
+      });
+  /*********/ 
+  /*************** */
+
+         
+
+        }).catch((err) => {
+            res.status(400).send({
+                message: "erreur aaaaaaaa: " + err
+            })
+        })
+
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur bbbb: " + e
+        })
+
+
+    });
+});
+
+
+
 
 app.get('/ListerFormations', (req, res) => {
 
@@ -265,6 +458,19 @@ app.get('/getImageFormateur/:id', (req, res) => {
 
 });
 
+/*
+app.put("/ModifierFormateurAdmin/:id", (req, res) => {
+    
+    
+    let data = req.body;
+    let token = req.headers.authorization;
+    let i = jwt.verify(token, 'TokenModif'); 
+    Formation.findByIdAndUpdate({
+        _id: req.params.id
+
+
+});
+*/
 
 
 
