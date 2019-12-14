@@ -5,7 +5,8 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const multipart = require('connect-multiparty');
 const { mongooose } = require('./../db/config');
-
+/****/ const nodemailer = require ('nodemailer');
+/******/
 const { Formateur } = require('./../models/formateur');
 const { Formation } = require('./../models/formation');
 var app = express();
@@ -185,8 +186,69 @@ app.post("/ajouterformation", multipartMiddleware, (req, res) => {
         });
 
         formation.save().then(() => {
-            console.log("form" + formation);
 
+            console.log("form" + formation);
+/********************************************* */
+
+const message = ` <h1 color='red' align="center">Formalab </h1> <br>
+            
+`;
+
+let transporter = nodemailer.createTransport({
+
+    service : 'gmail',
+    auth: {
+        user : 'formalab7@gmail.com',
+        pass : 'azerty-123'
+         }
+    });
+
+
+    let fe = [];
+    Formalabeur.find().then((fa) => {
+        console.log("lenththth:"+fa.length);
+    
+       for (let i = 0; i < fa.length; i++) {
+        fe = fa[i].email;
+        let mailoptions={
+            from : 'formalab7@gmail.com',
+            to: fe,
+            subject: 'Formation Register' , 
+            html :message
+            
+         };
+         transporter.sendMail(mailoptions, (error, info) => {
+            if (error) {
+                return console.log(error);
+            }
+            else {
+                console.log("email sent");
+            }
+        });
+       }
+    })
+            
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+/*************************************** */
+
+
+
+
+/********************************** */
             res.status(200).send(formation);
 
         }).catch((err) => {
@@ -404,12 +466,14 @@ app.put('/activer/:id', (req, res) => {
                 volume_horaire: data._volume_horaire,
                 prix: data._prix,
                 idformateur: f._id,
-                image_Formation:"http://localhost:3000/mer.jpg"  ,            
+                image_Formation:im,            
                 datef:data._datef   
-    
-            });
-    
-            formation.save().then(() => {
+                });
+                console.log("formation"+ formation);
+                
+                formation.save().then(() => {
+                    /********************* */
+                 
                 console.log("form" + formation);
                 res.status(200).send(formation);
             }).catch((err) => {
@@ -428,6 +492,41 @@ app.put('/activer/:id', (req, res) => {
     });
     
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    app.get("/Allformalabeurs", (req, res) => {
+        Formalabeur.find().then((forma) => {
+      console.log("aaaaaaaaaaaa"+forma.length);
+      var fe = [];
+    
+      /*
+      for (let i = 0; i < forma.length; i++) {
+          fe = forma[i].email;
+    
+          console.log("gr" + fe);}
+          */
+         forma.forEach(element=>{
+             fe.push(element.email);
+         }
+            )
+    
+              res.status(200).send(fe);
+              console.log("length + "+fe.length);
+              
+    
+    })
+    });
 
 module.exports = app;
 
