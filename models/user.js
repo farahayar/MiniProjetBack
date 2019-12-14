@@ -60,6 +60,12 @@ const userschema = new mongooose.Schema(
             trim: true,
             minlength: 2,
 
+        },
+        img: {
+            type: String,
+            require: true,
+            trim: true,
+
         }
     }
 

@@ -216,6 +216,38 @@ app.get('/ListerFormations', (req, res) => {
 
 });
 
+/************ lister les formations disponible 'avec date'   ***************** */
+app.get('/ListerFormations2', (req, res) => {
+
+    let formationtab=[];
+    Formation.find().then((formations) => {
+          formations.forEach(f => {
+         let parts =f.datef.split('/') ;          
+        let d=parseInt(parts[0]);
+        let m=parseInt(parts[1]-1);
+         let y=parseInt(parts[2]);
+         var myDate2 = new Date();
+        myDate2.setDate(d);
+         myDate2.setMonth(m);
+        myDate2.setFullYear(y);
+        console.log(myDate2);
+        if(myDate2>new Date())
+        formationtab.push(f);
+        console.log(formationtab);
+        
+        }),
+
+
+        res.status(200).send(formationtab);
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur : " + e
+        })
+
+
+    });
+})
+
 app.put('/consulterFormateur/:id', (req, res) => {
 
     let id = req.params.id;
@@ -266,6 +298,135 @@ app.get('/getImageFormateur/:id', (req, res) => {
 });
 
 
+
+/******************** activer ou désactiver admin **************** */
+app.put('/activer/:id', (req, res) => {
+
+
+    let id = req.params.id;
+
+
+
+    Formateur.findById({ _id: id }).then( (f) => {
+
+
+        if (!f) {
+            res.status(400).send(console.log("foramteur not found" + err));
+        }
+        else {
+            let e = f.admin;
+
+            x: String;
+            if(e=="active")
+
+            x = "desactive";
+            else 
+            if(e== "desactive")
+            x="active"
+            var fr= {
+                admin: x
+            }
+
+           Formateur.findByIdAndUpdate({ _id: f.id }, { $set: fr }, { new: true }, (err, doc) => {
+                if (!err) { res.status(200).send(doc); }
+                else {
+                    res.status(400).send(console.log("erreur de mise a jour" + err));
+                }
+            });
+        }
+
+    });
+})
+
+/*app.put('/desactive/:id', (req, res) => {
+
+    
+    
+        let id = req.params.id;
+    
+    
+
+    
+        Formateur.findById({ _id: id }).then( (f) => {
+    
+    
+            if (!f) {
+                res.status(400).send(console.log("foramteur not found" + err));
+            }
+            else {
+                let e = f.admin;
+    
+                x: String;
+                x = (e == "desactive") ? "active" : "desactive"
+    
+                var fr= {
+                    admin: x
+                }
+    
+               Formateur.findByIdAndUpdate({ _id: f.id }, { $set: fr }, { new: true }, (err, doc) => {
+                    if (!err) { res.status(200).send(doc); }
+                    else {
+                        res.status(400).send(console.log("erreur de mise a jour" + err));
+                    }
+                });
+            }
+    
+        });
+    })*/
+/************************* ajout formation avec date **************************** */
+    app.post("/ajouterformationdate", multipartMiddleware, (req, res) => {
+        let data = JSON.parse(req.body.formateur);
+      
+        let image = req.files.image;
+    
+        let ext = image.type.split('/')[1];
+        let imagePath = "assets/" + data._titre + "." + ext;
+        console.log(imagePath);
+    
+        fs.renameSync(req.files.image.path, imagePath);
+        let im = "http://localhost:3000/" + data._titre + "." + ext;
+    
+        console.log("nom" + data._idformateur);
+    
+        Formateur.findOne({ nom: data._idformateur }).then((f) => {
+            console.log("f" + f._id);
+           /* var parts =data._datef.split('/');            
+            let d=parseInt(parts[0]);
+         let m=parseInt(parts[1]-1);
+         let y=parseInt(parts[2]);
+    var myDate2 = new Date();
+    myDate2.setDate(d);
+    myDate2.setMonth(m);
+    myDate2.setFullYear(y);*/
+            let formation = new Formation({
+                titre: data._titre,
+                description: data._description,
+                volume_horaire: data._volume_horaire,
+                prix: data._prix,
+                idformateur: f._id,
+                image_Formation:"http://localhost:3000/mer.jpg"  ,            
+                datef:data._datef   
+    
+            });
+    
+            formation.save().then(() => {
+                console.log("form" + formation);
+                res.status(200).send(formation);
+            }).catch((err) => {
+                res.status(400).send({
+                    message: "erreur : " + err
+                })
+            })
+    
+        }).catch((e) => {
+            res.status(400).send({
+                message: "erreur : " + e
+            })
+    
+    
+        });
+    });
+    
 
 
 module.exports = app;

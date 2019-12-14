@@ -38,6 +38,11 @@ const formationSchema = new mongooose.Schema(
             type: String,
             require: true,
             trim: true,
+        },
+        datef:{
+            type:String,
+            require: true,
+            trim: true,
         }
     }
 

@@ -16,12 +16,25 @@ app.use(bodyParser.json());
 
 const multipartMiddleware = multipart({ uploadDir: './assets' });
 
-app.post("/inscriptionformation/:id", (req, res) => {
+app.post("/inscriptionformation/:id", async (req, res) => {
     let data = req.body;
     let idf = req.params.id;
+    let image;
+    let etat;
+    
     console.log("indc" + data._nom);
     console.log("idfor" + idf);
-
+    
+await Formalabeur.findOne({cin:data._cin}).then((form)=>{
+    if(form)
+    {
+image=form.img;
+etat="activer";}
+else
+{
+image="http://localhost:3000/ANONYME.jpg"  
+ etat="desactiver";}
+})
     let user = new User({
         nom: data._nom,
         prenom: data._prenom,
@@ -29,10 +42,13 @@ app.post("/inscriptionformation/:id", (req, res) => {
         tel: data._tel,
         email: data._email,
         cin: data._cin,
-        lienfb: data._lienfb
+        lienfb: data._lienfb,
+        img:image,
+        formalabeur:etat
+
     })
 
-    user.save().then((us) => {
+   user.save().then((us) => {
         console.log("babababab");
         console.log("iduser" + us._id);
 
@@ -59,6 +75,7 @@ app.post("/inscriptionformation/:id", (req, res) => {
         })
     });
 });
+
 
 app.post("/ajoutFormalabeur", multipartMiddleware, (req, res) => {
     let data = JSON.parse(req.body.formalabeur);
@@ -137,6 +154,52 @@ app.get("/getAllUsers/:titre", (req, res) => {
 })
 
 */
+app.get("/getAllUsers/:titre", (req, res) => {
+    console.log("************************");
+
+    let titre = req.params.titre;
+    console.log("titre"+titre);
+    
+    var us = [];
+    Formation.findOne({ titre: titre }).then((form) => {
+        
+        console.log("form :" + form);
+
+        Groupe.find({ idFormation: form._id }).then(async(grs) => {
+            for (let i = 0; i < grs.length; i++) {
+                gr = grs[i];
+                console.log("gr" + gr);
+
+              await  User.findOne({
+                    cin: gr.cin
+                }).then((users) => {
+                    console.log(users);
+                    
+                    
+                    us.push(users);
+                    console.log("usI" + us[i+1]);
+
+
+                    console.log("users " + users);
+
+                    if (users.length == 0) { res.status(400).send({ message: "aucun users pour cet utilisateur" }) };
+
+                })
+            }
+            res.status(200).send(us);
+            for (let i = 0; i < us.length; i++) {
+
+                console.log("us" + us[i].nom);
+
+            }
+
+           
+        }).catch((err) => { res.status(400).send("errr"); })
+
+
+    })
+})
+
 
 
 app.get("/getAllUsers", (req, res) => {
