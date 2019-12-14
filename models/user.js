@@ -2,7 +2,6 @@ const mongooose = require('mongoose');
 const validator = require('validator');
 
 
-
 const userschema = new mongooose.Schema(
     {
         email: {
@@ -68,4 +67,3 @@ const userschema = new mongooose.Schema(
 
 User = mongooose.model('User', userschema);
 module.exports = { User };
-

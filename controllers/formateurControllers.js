@@ -17,6 +17,12 @@ const Email = require('email-templates');
 
 const { Formateur } = require('./../models/formateur');
 const { Formation } = require('./../models/formation');
+
+/*user:sprint 3 */
+const { User } = require('./../models/user');
+/***********/ 
+
+
 var app = express();
 app.use(bodyParser.json());
 
@@ -473,6 +479,65 @@ app.put("/ModifierFormateurAdmin/:id", (req, res) => {
 */
 
 
+
+
+
+
+
+
+/***************************sprint 3****************************/
+
+
+app.get('/ListerUsers', (req, res) => {
+
+    User.find().then((users) => {
+        if (users) {
+            res.status(200).send(users);
+        }
+        else { console.log("not found" + err.message) }
+
+    })
+
+});
+
+app.delete('/supprimerUser/:email', (req, res) => {
+
+    let email = req.params.email;
+    
+
+    User.findOneAndRemove({ email: email },
+
+        (err, doc) => {
+            if (!err) {
+                res.status(200).send(doc);
+                console.log(doc);
+            }
+            else { console.log('Error in Users Delete :' + err) }
+        });
+});
+
+
+app.put('/consulterInscription/:id', (req, res) => {
+
+    let id = req.params.id;
+
+    User.findById({ _id: id }).then((us) => {
+
+
+        res.status(200).send(us);
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur :" + e
+        })
+
+
+    });
+})
+
+
+
+
+/*******************************************************/
 
 module.exports = app;
 
