@@ -70,9 +70,9 @@ app.get("/encour/:cin", (req, res) => {
                 formation.forEach(element => {
                     if(new Date()>new Date(element.date))
                     {
-                        if((element.duree*3600000)>(new Date()-new Date(element.date))) 
+                        if((element.duree*86400000)>(new Date()-new Date(element.date))) 
                             formations.push(element);
-                        console.log((element.duree*3600000)+" et "+(new Date()-new Date(element.date)));
+                        console.log((element.duree*86400000)+" et "+(new Date()-new Date(element.date)));
                     }
                     });
                     res.send(formations);
@@ -103,9 +103,9 @@ app.get("/fini/:cin", (req, res) => {
                 formation.forEach(element => {
                     if(new Date()>new Date(element.date))
                     {
-                        if((element.duree*3600000) <(new Date()-new Date(element.date))) 
+                        if((element.duree*86400000) <(new Date()-new Date(element.date))) 
                             formations.push(element);
-                        console.log((element.duree*3600000)+" et "+(new Date()-new Date(element.date)));
+                        console.log((element.duree*86400000)+" et "+(new Date()-new Date(element.date)));
                     }
                 });
             res.send(formations);
@@ -170,6 +170,56 @@ app.get('/ListerFormations', (req, res) => {
     })
 
 });
+
+
+app.post("/ajouterformation", multipartMiddleware, (req, res) => {
+
+    //let data = JSON.parse(req.body.formation);
+    let image = req.files.image;
+
+    let ext = image.type.split('/')[1];
+    let imagePath = "assets/" + data._titre + "." + ext;
+    console.log(imagePath);
+
+    fs.renameSync(req.files.image.path, imagePath);
+    let im = "http://localhost:3000/" + data._titre + "." + ext;
+
+    console.log("nom" + data._idformateur);
+
+    Formateur.findOne({ nom: data._idformateur }).then((f) => {
+        console.log("f" + f._id);
+
+
+        let formation = new Formation({
+            titre: data._titre,
+            description: data._description,
+            volume_horaire: data._volume_horaire,
+            prix: data._prix,
+            idformateur: f._id,
+            image_Formation: im
+
+        });
+
+        formation.save().then(() => {
+            console.log("form" + formation);
+
+            res.status(200).send(formation);
+
+        }).catch((err) => {
+            res.status(400).send({
+                message: "erreur : " + err
+            })
+        })
+
+    }).catch((e) => {
+        res.status(400).send({
+            message: "erreur : " + e
+        })
+
+
+    });
+});
+
 
 
 
