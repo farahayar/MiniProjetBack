@@ -140,7 +140,7 @@ app.post("/ajoutFormateur", multipartMiddleware, (req, res) => {
     console.log(imagePath);
 
    // fs.renameSync(req.files.image.path, imagePath);
-    let im = "http://localhost:4200/" + data._nom + "." + ext;
+    let im = "http://localhost:3000/" + data._nom + "." + ext;
 
     let formateur = new Formateur({
         nom: data._nom,
