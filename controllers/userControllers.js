@@ -791,7 +791,7 @@ Formalabeur.find().then((f) => {
         </div>
         <!--[if mso]></td></tr></table><![endif]-->
         <div align="center" class="img-container center autowidth" style="padding-right: 0px;padding-left: 0px;">
-        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]--><img align="center" alt="Image" border="0" class="center autowidth" src="./../images/logo_1.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; border: 0; height: auto; width: 100%; max-width: 362px; display: block;" title="Image" width="362"/>
+        <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]--><img align="center" alt="Image" border="0" class="center autowidth" src="cid:logo" style="text-decoration: none; -ms-interpolation-mode: bicubic; border: 0; height: auto; width: 100%; max-width: 362px; display: block;" title="Image" width="362"/>
         <!--[if mso]></td></tr></table><![endif]-->
         </div>
         <!--[if (!mso)&(!IE)]><!-->
@@ -1189,10 +1189,10 @@ Formalabeur.find().then((f) => {
         <table activate="activate" align="center" alignment="alignment" cellpadding="0" cellspacing="0" class="social_table" role="presentation" style="table-layout: fixed; vertical-align: top; border-spacing: 0; border-collapse: undefined; mso-table-tspace: 0; mso-table-rspace: 0; mso-table-bspace: 0; mso-table-lspace: 0;" to="to" valign="top">
         <tbody>
         <tr align="center" style="vertical-align: top; display: inline-block; text-align: center;" valign="top">
-        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="http://localhost:3000/+facebook@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Facebook" width="32"/></a></td>
-        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="./../images/twitter@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Twitter" width="32"/></a></td>
-        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="./../images/instagram@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Instagram" width="32"/></a></td>
-        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="./../images/linkedin@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="LinkedIn" width="32"/></a></td>
+        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="cid:facebook" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Facebook" width="32"/></a></td>
+        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="cid:twitter" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Twitter" width="32"/></a></td>
+        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="cid:instagram" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Instagram" width="32"/></a></td>
+        <td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="cid:linkedin" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="LinkedIn" width="32"/></a></td>
         </tr>
         </tbody>
         </table>
@@ -1235,7 +1235,32 @@ Formalabeur.find().then((f) => {
                 from : 'formalab7@gmail.com',
                 to: user.email,
                 subject: 'Formation Register' , 
-                html :maill
+                html :maill,
+                attachments: [{
+                    filename: 'logo_1.png',
+                    path:__dirname + '/images/logo_1.png',
+                    cid: "logo" 
+                },
+                {
+                    filename: 'facebook@2x.png',
+                    path:__dirname + '/images/facebook@2x.png',
+                    cid: "facebook" 
+                },
+                {
+                    filename: 'twitter@2x.png',
+                    path:__dirname + '/images/twitter@2x.png',
+                    cid: "twitter" 
+                },
+                {
+                    filename: 'instagram@2x.png',
+                    path:__dirname + '/images/instagram@2x.png',
+                    cid: "instagram" 
+                },
+                {
+                    filename: 'linkedin@2x.png',
+                    path:__dirname + '/images/linkedin@2x.png',
+                    cid: "linkedin" 
+                }]
                 
              };
               transporter.sendMail(mailoptions, (error, info) => {
@@ -1456,7 +1481,7 @@ app.post("/ajoutFormalabeur", multipartMiddleware, (req, res) => {
 </div>
 <!--[if mso]></td></tr></table><![endif]-->
 <div align="center" class="img-container center autowidth" style="padding-right: 0px;padding-left: 0px;">
-<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]--><img align="center" alt="Image" border="0" class="center autowidth" src="images/logo_3.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; border: 0; height: auto; width: 100%; max-width: 362px; display: block;" title="Image" width="362"/>
+<!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 0px;padding-left: 0px;" align="center"><![endif]--><img align="center" alt="Image" border="0" class="center autowidth" src="cid:logo" style="text-decoration: none; -ms-interpolation-mode: bicubic; border: 0; height: auto; width: 100%; max-width: 362px; display: block;" title="Image" width="362"/>
 <!--[if mso]></td></tr></table><![endif]-->
 </div>
 <!--[if (!mso)&(!IE)]><!-->
@@ -1840,7 +1865,7 @@ app.post("/ajoutFormalabeur", multipartMiddleware, (req, res) => {
 <!--[if (!mso)&(!IE)]><!-->
 <div style="border-top:0px solid transparent; border-left:0px solid transparent; border-bottom:0px solid transparent; border-right:0px solid transparent; padding-top:5px; padding-bottom:5px; padding-right: 0px; padding-left: 0px;">
 <!--<![endif]-->
-<div style="font-size:16px;text-align:center;font-family:Arial, Helvetica Neue, Helvetica, sans-serif"; color:white><br/>
+<div style="font-size:16px;text-align:center;font-family:Arial, Helvetica Neue, Helvetica, sans-serif;color:white"><br/>
 <br/>
 <div class="our-class"> ${data._pwd} </div>
 </div>
@@ -1886,10 +1911,10 @@ app.post("/ajoutFormalabeur", multipartMiddleware, (req, res) => {
 <table activate="activate" align="center" alignment="alignment" cellpadding="0" cellspacing="0" class="social_table" role="presentation" style="table-layout: fixed; vertical-align: top; border-spacing: 0; border-collapse: undefined; mso-table-tspace: 0; mso-table-rspace: 0; mso-table-bspace: 0; mso-table-lspace: 0;" to="to" valign="top">
 <tbody>
 <tr align="center" style="vertical-align: top; display: inline-block; text-align: center;" valign="top">
-<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="images/facebook@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Facebook" width="32"/></a></td>
-<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="images/twitter@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Twitter" width="32"/></a></td>
-<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="images/instagram@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Instagram" width="32"/></a></td>
-<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="images/linkedin@2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="LinkedIn" width="32"/></a></td>
+<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="cid:facebook" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Facebook" width="32"/></a></td>
+<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="cid:twitter" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Twitter" width="32"/></a></td>
+<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="cid:instagram" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="Instagram" width="32"/></a></td>
+<td style="word-break: break-word; vertical-align: top; padding-bottom: 5px; padding-right: 3px; padding-left: 3px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="cid:linkedin" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: none; display: block;" title="LinkedIn" width="32"/></a></td>
 </tr>
 </tbody>
 </table>
@@ -1931,7 +1956,32 @@ app.post("/ajoutFormalabeur", multipartMiddleware, (req, res) => {
                 from : 'formalab7@gmail.com',
                 to: formalabeur.email,
                 subject: 'YOU DID REGISTER' , 
-                html :mail
+                html :mail,
+                attachments: [{
+                    filename: 'logo_1.png',
+                    path:__dirname + '/images/logo_1.png',
+                    cid: "logo" 
+                },
+                {
+                    filename: 'facebook@2x.png',
+                    path:__dirname + '/images/facebook@2x.png',
+                    cid: "facebook" 
+                },
+                {
+                    filename: 'twitter@2x.png',
+                    path:__dirname + '/images/twitter@2x.png',
+                    cid: "twitter" 
+                },
+                {
+                    filename: 'instagram@2x.png',
+                    path:__dirname + '/images/instagram@2x.png',
+                    cid: "instagram" 
+                },
+                {
+                    filename: 'linkedin@2x.png',
+                    path:__dirname + '/images/linkedin@2x.png',
+                    cid: "linkedin" 
+                }]
                 
              };
             /********/
