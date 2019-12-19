@@ -25,7 +25,7 @@ const formationSchema = new mongooose.Schema(
         prix: {
             type: String,
             trim: true,
-            minlength: 3,
+            minlength: 1,
 
         },
         idformateur: {
@@ -35,6 +35,11 @@ const formationSchema = new mongooose.Schema(
 
         }
         , image_Formation: {
+            type: String,
+            require: true,
+            trim: true,
+        }, 
+        date: {
             type: String,
             require: true,
             trim: true,

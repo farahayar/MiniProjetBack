@@ -7,6 +7,7 @@ const formalabeurschema = new mongooose.Schema(
     {
         email: {
             type: String,
+            unique:true,
             require: true,
             trim: true,
             minlength: 5,
@@ -42,6 +43,7 @@ const formalabeurschema = new mongooose.Schema(
         },
         cin: {
             type: String,
+            unique:true,
             require: true,
             trim: true,
             minlength: 2,

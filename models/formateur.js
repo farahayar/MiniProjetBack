@@ -71,6 +71,7 @@ const formateurschema = new mongooose.Schema(
             require: true,
             trim: true,
         }
+        
     }
 
 );
